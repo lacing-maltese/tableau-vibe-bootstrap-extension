@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configure Extension</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dialog">
+  <div id="config-app">
+    <h2>Configure</h2>
+
+    <div class="field-group">
+      <label for="worksheet-select">Worksheet</label>
+      <select id="worksheet-select">
+        <option value="">Select a worksheet...</option>
+      </select>
+    </div>
+
+    <!-- Add your configuration fields here -->
+
+    <div class="actions">
+      <button id="cancel-btn" class="secondary-btn">Cancel</button>
+      <button id="save-btn" class="primary-btn">Save</button>
+    </div>
+  </div>
+
+  <!-- Self-hosted Extensions API — do not replace with a CDN URL -->
+  <script src="js/tableau.extensions.1.latest.min.js"></script>
+  <script src="js/config.js"></script>
+</body>
+</html>

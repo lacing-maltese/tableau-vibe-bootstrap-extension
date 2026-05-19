@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest manifest-version="0.1" xmlns="http://www.tableau.com/xml/addin_manifest">
+  <name><text>My Extension</text></name>
+  <description>Replace this with a one-line description of what your extension does.</description>
+  <source-location>
+    <url>https://your-github-username.github.io/your-repo-name/index.html</url>
+    <min-api-version>1.4</min-api-version>
+  </source-location>
+  <icon>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</icon>
+  <permissions>
+    <permission>full data</permission>
+  </permissions>
+</manifest>

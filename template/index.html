@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Extension</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="panel">
+  <div id="app">
+
+    <!-- Shown before the extension is configured -->
+    <div id="not-configured" class="state hidden">
+      <p class="hint">Not configured.</p>
+      <button id="configure-btn" class="primary-btn">Configure</button>
+    </div>
+
+    <!-- Shown once configured and ready -->
+    <div id="ready" class="state hidden">
+      <button id="action-btn" class="primary-btn">
+        <span id="btn-label">Run</span>
+      </button>
+      <p id="status" class="status"></p>
+    </div>
+
+    <!-- Shown during initialization -->
+    <div id="loading" class="state">
+      <p class="hint">Initializing...</p>
+    </div>
+
+  </div>
+
+  <!-- Self-hosted Extensions API — do not replace with a CDN URL -->
+  <script src="js/tableau.extensions.1.latest.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
