@@ -65,7 +65,7 @@ This skill scaffolds **dashboard extensions** — they run in a zone on a dashbo
 - Namespace: `xmlns="http://www.tableau.com/xml/extension_manifest"` — the older `addin_manifest` namespace is rejected by Tableau Cloud
 - `<dashboard-extension id="com.your-org.your-extension" extension-version="1.0.0">` wraps all content — the `id` must be unique (reverse-domain style)
 - Required child elements **in this order**: `<default-locale>`, `<name>`, `<description>`, `<author>`, `<min-api-version>`, `<source-location>`, `<icon>`, `<permissions>`
-- `<name>` is **plain text** — do not wrap in `<text>`: `<name>My Extension</name>`
+- `<name>` is **plain text** — **never** `<name><text>My Extension</text></name>`. That syntax belongs to the old `addin_manifest` format and will fail on Tableau Cloud with `no declaration found for element 'text'`. Correct: `<name>My Extension</name>`
 - `<min-api-version>` is a **sibling of** `<source-location>`, not nested inside it
 - `<author>` is required — include `name`, `email`, `organization`, `website` attributes
 - `<source-location>` must use a valid HTTPS URL — Tableau Cloud rejects anything else
