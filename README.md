@@ -126,7 +126,7 @@ The template implements the standard shell for any dashboard extension:
 
 ## Examples built on this template
 
-- **[Webhook Bridge](../tableau-native-action-framework/)** — sends selected mark data as JSON to any automation platform (Zapier, Make, Power Automate, n8n, MuleSoft). Adds: field mapping UI, proxy with HMAC signing, agent instructions for AI workflows.
+- **[Dashboard Relay](../tableau-extension-dashboard-relay/)** — sends selected mark data as JSON to any automation platform (Zapier, Make, Power Automate, n8n, MuleSoft). Adds: field mapping UI, proxy with HMAC signing, agent instructions for AI workflows.
 
 ## Resources
 
