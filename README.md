@@ -31,7 +31,7 @@ If you're starting a new extension project, use this as your opening prompt with
 
 > I want to build a Tableau dashboard extension called "[your extension name]". [Describe what it does in one or two sentences.]
 >
-> I'm starting from this repo: https://github.com/bhartSF/tableau-vibe-bootstrap-extension — it includes a template and a scaffolding prompt for building Tableau extensions. Follow the setup instructions in the README to get oriented, then use the scaffolding prompt to build the extension.
+> Use this repo as your reference: https://github.com/bhartSF/tableau-vibe-bootstrap-extension — it includes a template and a scaffolding prompt for building Tableau extensions. Read the README and scaffolding prompt to understand the constraints, then scaffold the extension into a new directory I can host myself.
 
 Replace the bracketed parts with your extension name and description. The AI will read the README, orient itself on the template and constraints, and scaffold the extension from there.
 
@@ -49,11 +49,12 @@ https://github.com/tableau/extensions-api/raw/main/lib/tableau.extensions.1.late
 
 Do not use a CDN URL in your HTML — CDN URLs fail inside the Tableau Cloud iframe.
 
-### 2. Fork and deploy
+### 2. Copy and deploy
 
-1. Fork this repo
-2. Enable GitHub Pages: **Settings → Pages → Deploy from branch → main**
-3. Note your Pages URL: `https://your-username.github.io/your-repo-name/`
+1. Copy the `template/` directory into your own repo
+2. Push to your host of choice — GitHub Pages works well for this:
+   - Enable GitHub Pages: **Settings → Pages → Deploy from branch → main**
+   - Your Pages URL will be: `https://your-username.github.io/your-repo-name/`
 
 ### 3. Update the two hardcoded URLs
 
