@@ -67,6 +67,18 @@ Paste your Pages URL (`index.html`). Enable **Allow to run with network access**
 
 In a dashboard (edit mode), drag an **Extension** object onto the canvas. Select **My Extensions**, choose `manifest.trex`, and accept the prompt.
 
+## Starting a new extension from scratch
+
+If you're starting a new extension project, use this as your opening prompt with your AI assistant of choice:
+
+> I want to build a Tableau dashboard extension called "[your extension name]". [Describe what it does in one or two sentences.]
+>
+> I'm starting from this repo: https://github.com/bhartSF/tableau-vibe-bootstrap-extension — it includes a template and a scaffolding prompt for building Tableau extensions. Follow the setup instructions in the README to get oriented, then use the scaffolding prompt to build the extension.
+
+Replace the bracketed parts with your extension name and description. The AI will read the README, orient itself on the template and constraints, and scaffold the extension from there.
+
+---
+
 ## Using the scaffolding prompt
 
 `prompts/tableau-extension.md` contains everything an AI assistant needs to scaffold a new extension correctly — all the Tableau Cloud-specific constraints, field-tested patterns, and a step-by-step process. How you load it depends on which tool you're using.
