@@ -1,23 +1,28 @@
 Scaffold a working Tableau dashboard extension from scratch. Generate all required files and wire up the Tableau Extensions API correctly based on field-tested patterns.
 
-## Step 0 — Check for API changes before scaffolding
+## Step 0 — Ground-truth against official samples before scaffolding
 
-Before doing anything else, fetch the Extensions API release notes and check for changes that would affect the patterns in this skill:
+Before generating any files, fetch real working samples from the official repo to verify that this skill's patterns match what Tableau actually ships. Changelog scans miss structural errors that have been wrong for a long time — only a working sample can catch those.
 
+**0a. Fetch a canonical sample manifest to verify manifest structure:**
+```
+https://raw.githubusercontent.com/tableau/extensions-api/main/Samples/Dashboard/UINamespace/UINamespace.trex
+```
+Compare against the manifest template in this skill. Check: which `xmlns` namespace is used, whether `<dashboard-extension>` wrapper is present, the required child elements and their order, whether `<name>` is plain text or has a `<text>` child, where `<min-api-version>` sits. If the sample differs from this skill's template, use the sample as ground truth and note the discrepancy.
+
+**0b. Fetch a canonical sample JS to verify event patterns:**
+```
+https://raw.githubusercontent.com/tableau/extensions-api/main/Samples/Dashboard/UINamespace/UINamespace.js
+```
+Check: how event listeners are registered, what the exact string or enum used for mark selection is, whether `tableau.TableauEventType.*` enum references or string literals are used. If the sample differs from this skill's patterns, use the sample as ground truth and note the discrepancy.
+
+**0c. Check release notes for changes since 1.16.0:**
 ```
 https://github.com/tableau/extensions-api/releases
 ```
+Look specifically for: changes to manifest format, `initializeAsync`/`initializeDialogAsync`/`displayDialogAsync`, `getSelectedMarksAsync`, data table structure, environment properties, settings, events, or filter APIs.
 
-Scan the releases since the skill's reference version (**1.16.0**). Look specifically for:
-- Changes to manifest format or required elements
-- Changes to `initializeAsync`, `initializeDialogAsync`, or `displayDialogAsync`
-- Changes to `getSelectedMarksAsync` or data table structure
-- New or deprecated environment properties
-- Any breaking changes to settings, events, or filter APIs
-
-If you find relevant changes, apply them to the patterns below before generating files. Note any updates you made in your response to the user so the skill can be updated.
-
-If the releases page is unreachable, proceed with the patterns below and note that the currency check was skipped.
+If any fetch is unreachable, proceed with this skill's patterns and note that the check was skipped.
 
 ---
 
@@ -57,34 +62,37 @@ This skill scaffolds **dashboard extensions** — they run in a zone on a dashbo
 
 ### Manifest (`manifest.trex`)
 
-- Root element: `<manifest manifest-version="0.1" xmlns="http://www.tableau.com/xml/addin_manifest">`
-- Required child elements in order: `<name>`, `<description>`, `<source-location>`, `<icon>`, `<permissions>`
-- `<name>` must use `<text>` not `<string>`: `<name><text>My Extension</text></name>`
+- Namespace: `xmlns="http://www.tableau.com/xml/extension_manifest"` — the older `addin_manifest` namespace is rejected by Tableau Cloud
+- `<dashboard-extension id="com.your-org.your-extension" extension-version="1.0.0">` wraps all content — the `id` must be unique (reverse-domain style)
+- Required child elements **in this order**: `<default-locale>`, `<name>`, `<description>`, `<author>`, `<min-api-version>`, `<source-location>`, `<icon>`, `<permissions>`
+- `<name>` is **plain text** — do not wrap in `<text>`: `<name>My Extension</name>`
+- `<min-api-version>` is a **sibling of** `<source-location>`, not nested inside it
+- `<author>` is required — include `name`, `email`, `organization`, `website` attributes
 - `<source-location>` must use a valid HTTPS URL — Tableau Cloud rejects anything else
-- `<icon>` is required by Tableau Cloud. Use this base64 PNG placeholder if you have no icon:
+- `<icon>` is required — use this base64 PNG placeholder if you have no icon:
   `iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==`
-- `<min-api-version>` goes inside `<source-location>`, not at the root
-- Do not include `<global-property>` — it is not a valid element and will fail validation
 - `<permissions>` must include `<permission>full data</permission>` for mark/data access
 
-Correct structure (field-tested, working on Tableau Cloud):
+Correct structure (verified against official Tableau samples):
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<manifest manifest-version="0.1" xmlns="http://www.tableau.com/xml/addin_manifest">
-  <name><text>Extension Name</text></name>
-  <description>What it does.</description>
-  <source-location>
-    <url>https://your-pages-url/index.html</url>
+<manifest manifest-version="0.1" xmlns="http://www.tableau.com/xml/extension_manifest">
+  <dashboard-extension id="com.your-org.your-extension-name" extension-version="1.0.0">
+    <default-locale>en_US</default-locale>
+    <name>Extension Name</name>
+    <description>What it does.</description>
+    <author name="Your Name" email="you@example.com" organization="Your Org" website="https://your-site.com"/>
     <min-api-version>1.4</min-api-version>
-  </source-location>
-  <icon>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</icon>
-  <permissions>
-    <permission>full data</permission>
-  </permissions>
+    <source-location>
+      <url>https://your-pages-url/index.html</url>
+    </source-location>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</icon>
+    <permissions>
+      <permission>full data</permission>
+    </permissions>
+  </dashboard-extension>
 </manifest>
 ```
-
-Note: The docs show an alternate manifest format with a `<dashboard-extension id="...">` wrapper element and `xmlns="http://www.tableau.com/xml/extension_manifest"`. The simpler format above is field-tested and works. Use it unless you have a specific reason to use the newer format.
 
 ---
 
@@ -191,7 +199,7 @@ const config = raw ? JSON.parse(raw) : null;
 
 // Listen for settings changes (e.g., after config dialog closes)
 tableau.extensions.settings.addEventListener(
-  tableau.TableauEventType.SettingsChanged,
+  'settings-changed',
   () => { const updated = loadConfig(); if (updated) applyConfig(updated); }
 );
 ```
@@ -230,7 +238,9 @@ Values are always formatted strings — type coercion must happen downstream.
 
 ### Event system
 
-Listen to worksheet and dashboard events with `addEventListener`. Always store the handler reference so you can remove it and avoid duplicate triggers:
+Listen to worksheet and dashboard events with `addEventListener`. Always store the handler reference so you can remove it and avoid duplicate triggers.
+
+**Use string literals for event names, not `tableau.TableauEventType.*` enum references.** The enum is populated lazily inside the API bundle and can be `undefined` at call time, causing a silent `unsupported-event-name` error. The string values are stable and safe to use directly.
 
 ```javascript
 // Mark selection changes
@@ -238,25 +248,41 @@ const onMarksSelected = async (event) => {
   const marks = await event.getMarksAsync();
   // process marks
 };
-ws.addEventListener(tableau.TableauEventType.MarksSelected, onMarksSelected);
+ws.addEventListener('mark-selection-changed', onMarksSelected);
 
 // Filter changes
-ws.addEventListener(tableau.TableauEventType.FilterChanged, async (event) => {
+ws.addEventListener('filter-changed', async (event) => {
   const filter = await event.getFilterAsync();
   console.log('Filter changed:', filter.fieldName);
 });
 
 // Parameter changes
 const params = await dashboard.getParametersAsync();
-params[0].addEventListener(tableau.TableauEventType.ParameterChanged, (event) => {
+params[0].addEventListener('parameter-changed', (event) => {
   console.log('Parameter changed:', event);
 });
 
+// Settings changes
+tableau.extensions.settings.addEventListener('settings-changed', () => {
+  const updated = loadConfig();
+  if (updated) applyConfig(updated);
+});
+
 // Cleanup (prevent memory leaks and duplicate triggers)
-ws.removeEventListener(tableau.TableauEventType.MarksSelected, onMarksSelected);
+ws.removeEventListener('mark-selection-changed', onMarksSelected);
 ```
 
-Available event types: `MarksSelected`, `FilterChanged`, `ParameterChanged`, `SettingsChanged`, `SummaryDataChanged`, `DashboardLayoutChanged`, `WorkbookFormattingChanged`.
+Event string reference:
+
+| Event | String literal |
+|-------|---------------|
+| Mark selection | `'mark-selection-changed'` |
+| Filter changed | `'filter-changed'` |
+| Parameter changed | `'parameter-changed'` |
+| Settings changed | `'settings-changed'` |
+| Summary data changed | `'summary-data-changed'` |
+| Dashboard layout changed | `'dashboard-layout-changed'` |
+| Worksheet formatting changed | `'worksheet-formatting-changed'` |
 
 ---
 

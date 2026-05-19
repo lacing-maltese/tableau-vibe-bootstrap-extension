@@ -97,7 +97,7 @@
     document.getElementById('action-btn').addEventListener('click', onActionClick);
 
     tableau.extensions.settings.addEventListener(
-      tableau.TableauEventType.SettingsChanged,
+      'settings-changed',
       () => { const updated = loadConfig(); if (updated) applyConfig(updated); }
     );
   }).catch(err => console.error('Init failed:', err));
