@@ -27,6 +27,18 @@ Dashboard developers who want to build custom Tableau extensions and are using C
 
 ## Quick start
 
+If you're starting a new extension project, use this as your opening prompt with your AI assistant of choice:
+
+> I want to build a Tableau dashboard extension called "[your extension name]". [Describe what it does in one or two sentences.]
+>
+> I'm starting from this repo: https://github.com/bhartSF/tableau-vibe-bootstrap-extension — it includes a template and a scaffolding prompt for building Tableau extensions. Follow the setup instructions in the README to get oriented, then use the scaffolding prompt to build the extension.
+
+Replace the bracketed parts with your extension name and description. The AI will read the README, orient itself on the template and constraints, and scaffold the extension from there.
+
+---
+
+## Deploying the template
+
 ### 1. Get the Extensions API JS
 
 The Tableau Extensions API JS file is not included in this repo (it's large and versioned separately). Download it and place it at `template/js/tableau.extensions.1.latest.min.js`:
@@ -66,18 +78,6 @@ Paste your Pages URL (`index.html`). Enable **Allow to run with network access**
 ### 5. Add to a dashboard
 
 In a dashboard (edit mode), drag an **Extension** object onto the canvas. Select **My Extensions**, choose `manifest.trex`, and accept the prompt.
-
-## Starting a new extension from scratch
-
-If you're starting a new extension project, use this as your opening prompt with your AI assistant of choice:
-
-> I want to build a Tableau dashboard extension called "[your extension name]". [Describe what it does in one or two sentences.]
->
-> I'm starting from this repo: https://github.com/bhartSF/tableau-vibe-bootstrap-extension — it includes a template and a scaffolding prompt for building Tableau extensions. Follow the setup instructions in the README to get oriented, then use the scaffolding prompt to build the extension.
-
-Replace the bracketed parts with your extension name and description. The AI will read the README, orient itself on the template and constraints, and scaffold the extension from there.
-
----
 
 ## Using the scaffolding prompt
 
