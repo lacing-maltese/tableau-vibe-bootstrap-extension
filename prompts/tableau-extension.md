@@ -431,26 +431,15 @@ Before testing on Tableau Cloud:
 3. Fetch and save the Tableau Extensions API JS to `js/tableau.extensions.1.latest.min.js` from `https://raw.githubusercontent.com/tableau/extensions-api/main/lib/tableau.extensions.1.latest.min.js`.
 4. Generate `manifest.trex` using the exact structure above.
 5. Generate `index.html`, `config.html`, `js/main.js`, `js/config.js`, `css/styles.css` tailored to what the extension does — use the constraints above throughout.
-6. Walk the user through deployment:
+6. Remind the user what's ahead so they can orient themselves:
 
-   **Hosting on GitHub Pages (recommended):**
-   - Create a new public GitHub repo
-   - Push all files to the `main` branch
-   - Go to repo Settings → Pages → set Source to "Deploy from a branch", branch `main`, folder `/ (root)`, save
-   - Pages URL will be `https://<username>.github.io/<repo-name>/` — this is your hosting URL
-   - If you used a placeholder URL in Step 1, update the hardcoded config dialog URL in `js/main.js` to `https://<username>.github.io/<repo-name>/config.html` and push again
+   Here's what we'll do together to get your extension running:
 
-   **Allowlisting on Tableau Cloud:**
-   - Go to your Tableau Cloud site → Settings → Extensions
-   - Click "Add Extension by URL" and enter `https://<username>.github.io/<repo-name>/index.html`
-   - Enable "Allow to run with network access" — required for extensions that make outbound requests
-   - Save
-
-   **Adding to a dashboard:**
-   - Open a workbook in edit mode
-   - Drag an Extension object from the Objects panel onto the dashboard
-   - Click "Access Local Extensions" and upload `manifest.trex`
-   - Accept the permissions prompt
-   - The extension will initialize — if it needs configuration, a Configure button will appear (authoring mode only)
+   1. **Build** — generate all the extension files tailored to what you described
+   2. **Host** — push the files to a public GitHub repo and enable GitHub Pages (or another HTTPS host of your choice)
+   3. **Allowlist** — add the extension URL to your Tableau Cloud site so it's permitted to run
+   4. **Install** — drop the `.trex` manifest onto a dashboard in edit mode
+   5. **Configure** — if your extension has author settings, use the Configure button to set them up
+   6. **Test** — verify it works as a viewer, not just an author
 
    - **Expect to debug application logic** — this scaffold is structurally correct for Tableau Cloud (correct API calls, correct initialization, correct settings patterns) but application-level logic (state management, event feedback loops, data type edge cases) will need review and testing in your specific workbook context. That's normal software development, not a Tableau-specific problem.
