@@ -98,22 +98,30 @@ Correct structure (verified against official Tableau samples):
 
 ### Self-hosting the Extensions API JS
 
-Never use a CDN URL for the Tableau Extensions API JS — CDN URLs fail on Tableau Cloud with `ERR_NAME_NOT_RESOLVED` inside the extension iframe. Always include `js/tableau.extensions.1.latest.min.js` as a local file in the repo and load it with a relative path.
+Never use a CDN URL for the Tableau Extensions API JS — CDN URLs fail on Tableau Cloud with `ERR_NAME_NOT_RESOLVED` inside the extension iframe. Reference `js/tableau.extensions.1.latest.min.js` with a relative path in HTML.
+
+**Do NOT generate `js/tableau.extensions.1.latest.min.js` as an output file.** Include the `<script>` tag referencing it, but do not output the file itself. It must be downloaded separately from the Tableau Extensions API GitHub repo. Generating a placeholder or stub for it will cause a JavaScript parse error at runtime.
 
 ---
 
 ### Config dialog URL — must be hardcoded
 
-`window.location` inside a Tableau Cloud iframe returns the Tableau Cloud path, not the extension URL. This means `window.location.origin + '/config.html'` will produce a broken URL.
+> **CRITICAL — Config dialog URL must be a hardcoded string literal.**
 
-Always hardcode the config dialog URL as a string literal:
+`window.location` inside a Tableau Cloud iframe returns the Tableau Cloud embedding path, not your extension's URL. **There is no reliable way to derive your extension's URL at runtime.**
+
+The following patterns are ALL broken on Tableau Cloud and must NEVER be used:
+- `window.location.origin + '/config.html'`
+- `window.location.href.replace('index.html', 'config.html')`
+- `const base = window.location.origin; displayDialogAsync(base + '/config.html', ...)`
+- Any variable or expression passed to `displayDialogAsync` that is derived from `window.location`
+
+Always pass a hardcoded relative path string literal directly to `displayDialogAsync`:
 
 ```javascript
 function openConfig() {
-  const url = 'https://your-pages-url/config.html'; // hardcoded — window.location doesn't work in Tableau Cloud iframe
-  tableau.extensions.ui.displayDialogAsync(url, '', { height: 720, width: 520 })
+  tableau.extensions.ui.displayDialogAsync('config.html', '', { height: 720, width: 520 })
     .then(closePayload => {
-      // closePayload is whatever the dialog passed to initializeDialogAsync's close
       const cfg = loadConfig();
       if (cfg) applyConfig(cfg);
     })
@@ -184,13 +192,17 @@ tableau.extensions.initializeAsync({ configure: openConfig })
 
 Use `tableau.extensions.settings` to store and retrieve config. Settings travel with the workbook — no external storage needed for configuration.
 
-**`settings.saveAsync()` only works in authoring mode.** Calling it in viewing mode will fail. Always check mode before saving.
+**`settings.saveAsync()` only works in authoring mode. Calling it in viewing mode throws. This is the ONLY valid pattern — never call `saveAsync()` without this guard:**
 
 ```javascript
-// Save — authoring mode only
+// Save — MUST be wrapped in authoring mode check
 if (tableau.extensions.environment.mode === 'authoring') {
   tableau.extensions.settings.set('myConfigKey', JSON.stringify(configObj));
   await tableau.extensions.settings.saveAsync();
+  tableau.extensions.ui.closeDialog('saved');
+} else {
+  // Viewing mode — do not call saveAsync, close without saving or disable the save button
+  tableau.extensions.ui.closeDialog('');
 }
 
 // Load (works in any mode)
@@ -425,3 +437,4 @@ Before testing on Tableau Cloud:
    - Allowlist the extension URL on Tableau Cloud with network access enabled
    - Download `manifest.trex` and add it to their dashboard in edit mode
    - Get a free Tableau Cloud developer site at https://www.tableau.com/developer/get-site for testing
+   - **Expect to debug application logic** — this scaffold is structurally correct for Tableau Cloud (correct API calls, correct initialization, correct settings patterns) but application-level logic (state management, event feedback loops, data type edge cases) will need review and testing in their specific workbook context. That's normal software development, not a Tableau-specific problem.
