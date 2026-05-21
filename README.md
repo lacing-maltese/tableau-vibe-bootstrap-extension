@@ -31,54 +31,24 @@ If you're starting a new extension project, use this as your opening prompt with
 
 > I want to build a Tableau dashboard extension called "[your extension name]". [Describe what it does in one or two sentences.]
 >
-> Use this repo as your reference: https://github.com/bhartSF/tableau-vibe-bootstrap-extension — it includes a template and a scaffolding prompt for building Tableau extensions. Read the README and scaffolding prompt to understand the constraints, then scaffold the extension into a new directory I can host myself.
+> Use this repo as your reference: https://github.com/lacing-maltese/tableau-vibe-bootstrap-extension — it includes a template and a scaffolding prompt for building Tableau extensions. Read the README and scaffolding prompt to understand the constraints, then scaffold the extension into a new directory I can host myself.
 
 Replace the bracketed parts with your extension name and description. The AI will read the README, orient itself on the template and constraints, and scaffold the extension from there.
 
 ---
 
-## Deploying the template
+## What the AI will walk you through
 
-### 1. Get the Extensions API JS
+When you use the scaffolding prompt, the AI takes you through the full process end to end:
 
-The Tableau Extensions API JS file is not included in this repo (it's large and versioned separately). Download it and place it at `template/js/tableau.extensions.1.latest.min.js`:
+1. **Build** — generates all extension files tailored to what you described
+2. **Host** — pushes files to a public GitHub repo and enables GitHub Pages (or another HTTPS host of your choice)
+3. **Allowlist** — adds the extension URL to your Tableau Cloud site so it's permitted to run
+4. **Install** — drops the `.trex` manifest onto a dashboard in edit mode
+5. **Configure** — if your extension has author settings, uses the Configure button to set them up
+6. **Test** — verifies it works as a viewer, not just an author
 
-```
-https://github.com/tableau/extensions-api/raw/main/lib/tableau.extensions.1.latest.min.js
-```
-
-Do not use a CDN URL in your HTML — CDN URLs fail inside the Tableau Cloud iframe.
-
-### 2. Copy and deploy
-
-1. Copy the `template/` directory into your own repo
-2. Push to your host of choice — GitHub Pages works well for this:
-   - Enable GitHub Pages: **Settings → Pages → Deploy from branch → main**
-   - Your Pages URL will be: `https://your-username.github.io/your-repo-name/`
-
-### 3. Update the two hardcoded URLs
-
-In `manifest.trex`:
-```xml
-<url>https://your-username.github.io/your-repo-name/index.html</url>
-```
-
-In `js/main.js`:
-```javascript
-const CONFIG_DIALOG_URL = 'https://your-username.github.io/your-repo-name/config.html';
-```
-
-These must be hardcoded — `window.location` does not work inside the Tableau Cloud extension iframe.
-
-### 4. Allowlist on Tableau Cloud
-
-**Settings → Extensions → Add Extension by URL**
-
-Paste your Pages URL (`index.html`). Enable **Allow to run with network access**.
-
-### 5. Add to a dashboard
-
-In a dashboard (edit mode), drag an **Extension** object onto the canvas. Select **My Extensions**, choose `manifest.trex`, and accept the prompt.
+You don't need to know how any of these steps work — the AI handles them. This list is just so you know what's coming.
 
 ## Using the scaffolding prompt
 
@@ -145,5 +115,4 @@ The template implements the standard shell for any dashboard extension:
 
 - [Tableau Extensions API docs](https://tableau.github.io/extensions-api/docs/)
 - [Extensions API GitHub + samples](https://github.com/tableau/extensions-api)
-- [Free Tableau Cloud developer site](https://www.tableau.com/developer/get-site) — for testing without a paid subscription
 - [Tableau Developer Community](https://trailhead.salesforce.com/trailblazer-community/neighborhoods/tableau)
