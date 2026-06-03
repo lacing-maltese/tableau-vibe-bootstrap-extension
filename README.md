@@ -1,3 +1,5 @@
+# This is not production ready code - it represents an template to be reviewed and inspire other use cases
+
 # Tableau Vibe Bootstrap Extension
 
 A starter kit for building Tableau dashboard extensions with AI assistance (Claude Code or similar). Includes a deployable template, a scaffolding prompt for any AI coding assistant, and hard-won lessons from production deployments on Tableau Cloud.
